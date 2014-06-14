@@ -35,6 +35,7 @@ define_target "build-clang" do |target|
 					"-o", parameters[:object_file].shortest_path(input_root),
 					"-MMD", "-MF", parameters[:dependency_file], "-MT", "dependencies",
 					*environment[:cflags].flatten,
+					"-I", (environment[:install_prefix] + "include").shortest_path(input_root),
 					chdir: input_root
 				)
 			end
@@ -68,8 +69,9 @@ define_target "build-clang" do |target|
 				run!("clang++",
 					"-c", parameters[:source_file].relative_path,
 					"-o", parameters[:object_file].shortest_path(input_root),
-					"-MMD", "-MF", parameters[:dependency_file], "-MT", "dependencies",
+					"-MMD", "-MF", parameters[:dependency_file].shortest_path(input_root), "-MT", "dependencies",
 					*environment[:cxxflags].flatten,
+					"-I", (environment[:install_prefix] + "include").shortest_path(input_root),
 					chdir: input_root
 				)
 			end
@@ -100,6 +102,8 @@ define_target "build-clang" do |target|
 			output :executable_file
 			
 			apply do |parameters|
+				build_prefix = environment[:build_prefix]
+				
 				object_files = parameters[:source_files].collect do |file|
 					object_file = build_prefix + (file.relative_path + '.o')
 					fs.mkpath File.dirname(object_file)
