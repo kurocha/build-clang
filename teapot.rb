@@ -115,4 +115,8 @@ define_target "build-clang" do |target|
 			end
 		end
 	end
+	
+	target.provides "Language/C++11" do
+		cxxflags %W{-std=c++11 -Wno-c++11-narrowing}
+	end
 end
