@@ -27,6 +27,10 @@ define_target "build-clang" do |target|
 			
 			output :object_file
 			
+			output :dependency_file, implicit: true do |arguments|
+				arguments[:object_file].append(".d")
+			end
+			
 			apply do |parameters|
 				input_root = parameters[:source_file].root
 				
@@ -114,6 +118,10 @@ define_target "build-clang" do |target|
 				link :object_files => object_files, :executable_file => parameters[:executable_file]
 			end
 		end
+	end
+	
+	target.provides "Language/C99" do
+		cflags %W{-std=c99}
 	end
 	
 	target.provides "Language/C++11" do
