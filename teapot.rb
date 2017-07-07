@@ -34,7 +34,7 @@ define_target "build-clang" do |target|
 			apply do |parameters|
 				input_root = parameters[:source_file].root
 				
-				run!("clang",
+				run!(environment[:cc],
 					"-c", parameters[:source_file].relative_path,
 					"-o", parameters[:object_file].shortest_path(input_root),
 					"-MMD", "-MF", parameters[:dependency_file], "-MT", "dependencies",
@@ -70,7 +70,7 @@ define_target "build-clang" do |target|
 			apply do |parameters|
 				input_root = parameters[:source_file].root
 				
-				run!("clang++",
+				run!(environment[:cxx],
 					"-c", parameters[:source_file].relative_path,
 					"-o", parameters[:object_file].shortest_path(input_root),
 					"-MMD", "-MF", parameters[:dependency_file].shortest_path(input_root), "-MT", "dependencies",
