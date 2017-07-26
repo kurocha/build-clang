@@ -87,11 +87,11 @@ define_target "build-clang" do |target|
 			output :library_file
 			
 			apply do |parameters|
-				build_prefix = environment[:build_prefix]
+				build_prefix = environment[:build_prefix] + environment.checksum
 				
 				object_files = parameters[:source_files].collect do |file|
-					object_file = build_prefix + (file.relative_path + '.o')
-					fs.mkpath File.dirname(object_file)
+					object_file = build_prefix / (file.relative_path + '.o')
+					mkpath File.dirname(object_file)
 					
 					compile source_file: file, object_file: object_file
 				end
@@ -106,11 +106,11 @@ define_target "build-clang" do |target|
 			output :executable_file
 			
 			apply do |parameters|
-				build_prefix = environment[:build_prefix]
+				build_prefix = environment[:build_prefix] + environment.checksum
 				
 				object_files = parameters[:source_files].collect do |file|
-					object_file = build_prefix + (file.relative_path + '.o')
-					fs.mkpath File.dirname(object_file)
+					object_file = build_prefix / (file.relative_path + '.o')
+					mkpath File.dirname(object_file)
 					
 					compile source_file: file, object_file: object_file
 				end
