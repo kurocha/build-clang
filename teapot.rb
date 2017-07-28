@@ -33,6 +33,7 @@ define_target "build-clang" do |target|
 			
 			apply do |parameters|
 				input_root = parameters[:source_file].root
+				mkpath File.dirname(parameters[:object_file])
 				
 				run!(environment[:cc],
 					"-c", parameters[:source_file].relative_path,
@@ -69,6 +70,7 @@ define_target "build-clang" do |target|
 			
 			apply do |parameters|
 				input_root = parameters[:source_file].root
+				mkpath File.dirname(parameters[:object_file])
 				
 				run!(environment[:cxx],
 					"-c", parameters[:source_file].relative_path,
@@ -91,7 +93,6 @@ define_target "build-clang" do |target|
 				
 				object_files = parameters[:source_files].collect do |file|
 					object_file = build_prefix / (file.relative_path + '.o')
-					mkpath File.dirname(object_file)
 					
 					compile source_file: file, object_file: object_file
 				end
@@ -110,7 +111,6 @@ define_target "build-clang" do |target|
 				
 				object_files = parameters[:source_files].collect do |file|
 					object_file = build_prefix / (file.relative_path + '.o')
-					mkpath File.dirname(object_file)
 					
 					compile source_file: file, object_file: object_file
 				end
