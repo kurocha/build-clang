@@ -10,7 +10,7 @@ define_target "build-clang" do |target|
 	
 	target.provides "Build/Clang" do
 		define Rule, "compile.c" do
-			input :source_file, pattern: /\.(c|cc|m)$/
+			input :source_file, pattern: /\.(s|c|cc|m)$/
 			
 			input :dependencies, implicit: true do |arguments|
 				depfile_path = arguments[:object_file].append('.d')
