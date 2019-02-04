@@ -3,7 +3,7 @@
 #  This file is part of the "Teapot" project, and is released under the MIT license.
 #
 
-teapot_version "1.0.0"
+teapot_version "3.0"
 
 define_target "build-clang" do |target|
 	target.depends :linker
@@ -85,11 +85,12 @@ define_target "build-clang" do |target|
 		
 		# This rule compiles source files and links the resultant object files into a library, either static or dynamic depending on the file extension for the given platform.
 		define Rule, "build.native-library" do
-			input :source_files 
+			input :source_files
+			parameter :build_prefix
 			output :library_file
 			
 			apply do |parameters|
-				build_prefix = environment[:build_prefix] + environment.checksum
+				build_prefix = parameters[:build_prefix] + environment.checksum
 				
 				object_files = parameters[:source_files].collect do |file|
 					object_file = build_prefix / (file.relative_path + '.o')
@@ -97,17 +98,18 @@ define_target "build-clang" do |target|
 					compile source_file: file, object_file: object_file
 				end
 				
-				link :object_files => object_files, :library_file => parameters[:library_file]
+				link object_files: object_files, library_file: parameters[:library_file]
 			end
 		end
 		
 		# This rule compiles source files and links the resultant object files into an executable.
 		define Rule, "build.native-executable" do
 			input :source_files
+			parameter :build_prefix
 			output :executable_file
 			
 			apply do |parameters|
-				build_prefix = environment[:build_prefix] + environment.checksum
+				build_prefix = parameters[:build_prefix] + environment.checksum
 				
 				object_files = parameters[:source_files].collect do |file|
 					object_file = build_prefix / (file.relative_path + '.o')
@@ -115,7 +117,7 @@ define_target "build-clang" do |target|
 					compile source_file: file, object_file: object_file
 				end
 				
-				link :object_files => object_files, :executable_file => parameters[:executable_file]
+				link object_files: object_files, executable_file: parameters[:executable_file]
 			end
 		end
 	end
