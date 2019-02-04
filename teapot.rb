@@ -3,7 +3,7 @@
 #  This file is part of the "Teapot" project, and is released under the MIT license.
 #
 
-teapot_version "3.0"
+teapot_version "2.3"
 
 define_target "build-clang" do |target|
 	target.depends :linker
@@ -90,7 +90,7 @@ define_target "build-clang" do |target|
 			output :library_file
 			
 			apply do |parameters|
-				build_prefix = parameters[:build_prefix] + environment.checksum
+				build_prefix = parameters[:build_prefix]
 				
 				object_files = parameters[:source_files].collect do |file|
 					object_file = build_prefix / (file.relative_path + '.o')
@@ -109,7 +109,7 @@ define_target "build-clang" do |target|
 			output :executable_file
 			
 			apply do |parameters|
-				build_prefix = parameters[:build_prefix] + environment.checksum
+				build_prefix = parameters[:build_prefix]
 				
 				object_files = parameters[:source_files].collect do |file|
 					object_file = build_prefix / (file.relative_path + '.o')
