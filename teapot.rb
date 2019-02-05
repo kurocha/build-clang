@@ -9,6 +9,8 @@ define_target "build-clang" do |target|
 	target.depends :linker
 	
 	target.provides "Build/Clang" do
+		default header_search_paths []
+		
 		define Rule, "compile.c" do
 			input :source_file, pattern: /\.(s|c|cc|m)$/
 			
@@ -35,12 +37,16 @@ define_target "build-clang" do |target|
 				input_root = parameters[:source_file].root
 				mkpath File.dirname(parameters[:object_file])
 				
+				header_search_paths = environment[:header_search_paths].collect do |path|
+					["-I", path.shortest_path(input_root)]
+				end
+				
 				run!(environment[:cc],
 					"-c", parameters[:source_file].relative_path,
 					"-o", parameters[:object_file].shortest_path(input_root),
 					"-MMD", "-MF", parameters[:dependency_file], "-MT", "dependencies",
 					*environment[:cflags].flatten,
-					"-I", (environment[:install_prefix] + "include").shortest_path(input_root),
+					*header_search_paths.flatten,
 					chdir: input_root
 				)
 			end
@@ -72,12 +78,16 @@ define_target "build-clang" do |target|
 				input_root = parameters[:source_file].root
 				mkpath File.dirname(parameters[:object_file])
 				
+				header_search_paths = environment[:header_search_paths].collect do |path|
+					["-I", path.shortest_path(input_root)]
+				end
+				
 				run!(environment[:cxx],
 					"-c", parameters[:source_file].relative_path,
 					"-o", parameters[:object_file].shortest_path(input_root),
 					"-MMD", "-MF", parameters[:dependency_file].shortest_path(input_root), "-MT", "dependencies",
 					*environment[:cxxflags].flatten,
-					"-I", (environment[:install_prefix] + "include").shortest_path(input_root),
+					*header_search_paths.flatten,
 					chdir: input_root
 				)
 			end
