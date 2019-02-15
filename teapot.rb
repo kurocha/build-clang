@@ -6,6 +6,7 @@
 teapot_version "3.0"
 
 define_target "build-clang" do |target|
+	target.depends :platform, public: true
 	target.depends :linker, public: true
 	
 	target.provides "Build/Clang" do
@@ -131,6 +132,10 @@ define_target "build-clang" do |target|
 			end
 		end
 	end
+end
+
+define_target "build-clang-language" do |target|
+	target.depends "Build/Clang", public: true
 	
 	target.provides "Language/C99" do
 		cflags %W{-std=c99}
