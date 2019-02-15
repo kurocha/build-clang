@@ -3,10 +3,10 @@
 #  This file is part of the "Teapot" project, and is released under the MIT license.
 #
 
-teapot_version "2.3"
+teapot_version "3.0"
 
 define_target "build-clang" do |target|
-	target.depends :linker
+	target.depends :linker, public: true
 	
 	target.provides "Build/Clang" do
 		default header_search_paths []
