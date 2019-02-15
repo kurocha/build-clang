@@ -6,7 +6,6 @@
 teapot_version "3.0"
 
 define_target "build-clang" do |target|
-	target.depends :platform, public: true
 	target.depends :linker, public: true
 	
 	target.provides "Build/Clang" do
