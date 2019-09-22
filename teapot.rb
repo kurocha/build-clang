@@ -149,4 +149,14 @@ define_target "build-clang-language" do |target|
 		cxxflags %W{-std=c++14 -pthread}
 		linkflags %W{-pthread}
 	end
+	
+	target.provides "Language/C++17" do
+		cxxflags %W{-std=c++17 -pthread}
+		linkflags %W{-pthread}
+	end
+	
+	target.provides "Language/C++20" do
+		cxxflags %W{-std=c++20 -pthread}
+		linkflags %W{-pthread}
+	end
 end
