@@ -11,8 +11,31 @@ define_target "build-clang" do |target|
 	target.provides "Build/Clang" do
 		default header_search_paths []
 		
+		define Rule, "compile.asm" do
+			input :source_file, pattern: /\.(s)$/
+			
+			output :object_file
+			
+			apply do |parameters|
+				input_root = parameters[:source_file].root
+				mkpath File.dirname(parameters[:object_file])
+				
+				header_search_paths = environment[:header_search_paths].collect do |path|
+					["-I", path.shortest_path(input_root)]
+				end
+				
+				run!(environment[:cc],
+					"-c", parameters[:source_file].relative_path,
+					"-o", parameters[:object_file].shortest_path(input_root),
+					*environment[:cflags].flatten,
+					*header_search_paths.flatten,
+					chdir: input_root
+				)
+			end
+		end
+		
 		define Rule, "compile.c" do
-			input :source_file, pattern: /\.(s|c|cc|m)$/
+			input :source_file, pattern: /\.(c|cc|m)$/
 			
 			input :dependencies, implicit: true do |arguments|
 				depfile_path = arguments[:object_file].append('.d')
