@@ -62,7 +62,7 @@ define_target "build-clang" do |target|
 					depfile = Build::Makefile.load_file(depfile_path)
 					root = arguments[:source_file].root
 					
-					depfile.rules["dependencies"].collect{|relative_path| Path.join(root, relative_path)}
+					depfile.rules["dependencies"]&.collect{|relative_path| Path.join(root, relative_path)}
 				else
 					[]
 				end
