@@ -161,25 +161,30 @@ define_target "build-clang-language" do |target|
 	
 	target.provides "Language/C99" do
 		cflags %W{-std=c99}
+		ld environment[:cc]
 	end
 	
 	target.provides "Language/C++11" do
 		cxxflags %W{-std=c++11 -pthread}
 		linkflags %W{-pthread}
+		ld environment[:cxx]
 	end
 	
 	target.provides "Language/C++14" do
 		cxxflags %W{-std=c++14 -pthread}
 		linkflags %W{-pthread}
+		ld environment[:cxx]
 	end
 	
 	target.provides "Language/C++17" do
 		cxxflags %W{-std=c++17 -pthread}
 		linkflags %W{-pthread}
+		ld environment[:cxx]
 	end
 	
 	target.provides "Language/C++20" do
 		cxxflags %W{-std=c++20 -pthread}
 		linkflags %W{-pthread}
+		ld environment[:cxx]
 	end
 end
