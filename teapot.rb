@@ -56,6 +56,10 @@ define_target "build-clang" do |target|
 				arguments[:object_file].append(".d")
 			end
 			
+			output :command_file, implicit: true do |arguments|
+				arguments[:object_file].append(".compile_command.json")
+			end
+			
 			apply do |parameters|
 				input_root = parameters[:source_file].root
 				mkpath File.dirname(parameters[:object_file])
@@ -64,14 +68,22 @@ define_target "build-clang" do |target|
 					["-I", path.shortest_path(input_root)]
 				end
 				
-				run!(environment[:cc],
+				command = [
+					environment[:cc],
 					"-c", parameters[:source_file].relative_path,
 					"-o", parameters[:object_file].shortest_path(input_root),
 					"-MMD", "-MF", parameters[:dependency_file], "-MT", "dependencies",
 					*environment[:cflags].flatten,
 					*header_search_paths.flatten,
-					chdir: input_root
-				)
+				]
+				
+				File.write(parameters[:command_file], JSON.pretty_generate({
+					directory: input_root,
+					arguments: command,
+					file: parameters[:source_file].relative_path
+				}))
+				
+				run!(*command, chdir: input_root)
 			end
 		end
 		
@@ -97,6 +109,10 @@ define_target "build-clang" do |target|
 				arguments[:object_file].append(".d")
 			end
 			
+			output :command_file, implicit: true do |arguments|
+				arguments[:object_file].append(".compile_command.json")
+			end
+			
 			apply do |parameters|
 				input_root = parameters[:source_file].root
 				mkpath File.dirname(parameters[:object_file])
@@ -105,14 +121,22 @@ define_target "build-clang" do |target|
 					["-I", path.shortest_path(input_root)]
 				end
 				
-				run!(environment[:cxx],
+				command = [
+					environment[:cxx],
 					"-c", parameters[:source_file].relative_path,
 					"-o", parameters[:object_file].shortest_path(input_root),
 					"-MMD", "-MF", parameters[:dependency_file].shortest_path(input_root), "-MT", "dependencies",
 					*environment[:cxxflags].flatten,
-					*header_search_paths.flatten,
-					chdir: input_root
-				)
+					*header_search_paths.flatten
+				]
+				
+				File.write(parameters[:command_file], JSON.pretty_generate({
+					directory: input_root,
+					arguments: command,
+					file: parameters[:source_file].relative_path
+				}))
+				
+				run!(*command, chdir: input_root)
 			end
 		end
 		
